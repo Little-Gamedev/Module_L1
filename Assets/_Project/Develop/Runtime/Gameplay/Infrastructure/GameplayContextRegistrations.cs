@@ -1,0 +1,40 @@
+﻿using Assets._Project.Develop.Runtime.Gameplay.Cycle;
+using Assets._Project.Develop.Runtime.Gameplay.Sequence;
+using Assets._Project.Develop.Runtime.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
+using UnityEngine;
+
+namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
+{
+    public class GameplayContextRegistrations
+    {
+        public static void Process(DIContainer container, GameplayInputArgs args)
+        {
+            Debug.Log("Процесс регистрации сервисов на сцене геймплея");
+
+            container.RegisterAsSingle(c => CreateSequenceGenerator(c, args));
+            container.RegisterAsSingle(CreateSequenceInputChecker);
+            container.RegisterAsSingle(c => CreateGameplayCycle(c, args));
+        }
+
+        private static SequenceGenerator CreateSequenceGenerator(DIContainer c, GameplayInputArgs args)
+        {
+            SequenceConfig config = c.Resolve<ConfigsProviderService>().GetConfig<SequenceConfig>();
+
+            return new SequenceGenerator(config.GetSymbols(args.Mode), config.SequenceLength);
+        }
+
+        private static SequenceInputChecker CreateSequenceInputChecker(DIContainer c)
+            => new SequenceInputChecker();
+
+        private static GameplayCycle CreateGameplayCycle(DIContainer c, GameplayInputArgs args)
+            => new GameplayCycle(
+                c.Resolve<SequenceGenerator>(),
+                c.Resolve<SequenceInputChecker>(),
+                c.Resolve<SceneSwitcherService>(),
+                c.Resolve<ICoroutinesPerformer>(),
+                args);
+    }
+}
