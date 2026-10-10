@@ -18,13 +18,24 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.DI
             _parent = parent;
         }
 
-        public void RegisterAsSingle<T>(Func<DIContainer, T> creator)
+        public IRegistrationOptions RegisterAsSingle<T>(Func<DIContainer, T> creator)
         {
             if (IsAlreadyRegister<T>())
                 throw new InvalidOperationException($"{typeof(T)} уже зарегистрирован");
 
             Registration registration = new Registration(container => creator.Invoke(container));
             _container.Add(typeof(T), registration);
+
+            return registration;
+        }
+
+        public void Initialize()
+        {
+            foreach (Registration registration in _container.Values)
+            {
+                if (registration.IsNonLazy)
+                    registration.CreateInstanceFrom(this);
+            }
         }
 
         public bool IsAlreadyRegister<T>()

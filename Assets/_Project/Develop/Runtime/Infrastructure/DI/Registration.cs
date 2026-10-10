@@ -2,8 +2,10 @@ using System;
 
 namespace Assets._Project.Develop.Runtime.Infrastructure.DI
 {
-    public class Registration
+    public class Registration : IRegistrationOptions
     {
+        public bool IsNonLazy { get; private set; }
+
         private readonly Func<DIContainer, object> _creator;
 
         private object _cachedInstance;
@@ -25,5 +27,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.DI
 
             return _cachedInstance;
         }
+
+        public void NonLazy() => IsNonLazy = true;
     }
 }
