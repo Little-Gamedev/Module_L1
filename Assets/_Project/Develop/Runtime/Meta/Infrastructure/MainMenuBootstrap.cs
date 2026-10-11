@@ -2,8 +2,8 @@
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Meta.ModeSelection;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement;
-using Assets._Project.Develop.Runtime.Utilities.DataManagement.Serializers;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,8 +20,8 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
         //ТЕСТ
         private PlayerData _testData;
-        private string _testSerialized;
-        private JsonSerializer _testSerializer;
+        private ISaveLoadService _testSaveLoadService;
+        private ICoroutinesPerformer _testCoroutinesPerformer;
         //КОНЕЦ ТЕСТА
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
@@ -37,6 +37,11 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
             _modeSelector = _container.Resolve<SequenceModeSelector>();
 
+            //ТЕСТ
+            _testSaveLoadService = _container.Resolve<ISaveLoadService>();
+            _testCoroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
+            //КОНЕЦ ТЕСТА
+
             yield break;
         }
 
@@ -45,8 +50,6 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             Debug.Log("Главное меню. Нажмите 1 — цифры, 2 — буквы");
 
             //ТЕСТ
-            _testSerializer = new JsonSerializer();
-
             _testData = new PlayerData()
             {
                 WalletData = new Dictionary<CurrencyTypes, int>()
@@ -71,16 +74,24 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             //ТЕСТ
             if (Input.GetKeyDown(KeyCode.S))
             {
-                _testSerialized = _testSerializer.Serialize(_testData);
-                Debug.Log(_testSerialized);
+                _testCoroutinesPerformer.StartPerform(_testSaveLoadService.Save(_testData));
+                Debug.Log("Сохранение вызвано");
             }
 
             if (Input.GetKeyDown(KeyCode.D))
-            {
-                PlayerData loaded = _testSerializer.Deserialize<PlayerData>(_testSerialized);
-                Debug.Log($"Золото: {loaded.WalletData[CurrencyTypes.Gold]}, победы: {loaded.Wins}, поражения: {loaded.Losses}");
-            }
+                _testCoroutinesPerformer.StartPerform(TestLoad());
             //КОНЕЦ ТЕСТА
         }
+
+        //ТЕСТ
+        private IEnumerator TestLoad()
+        {
+            PlayerData loaded = null;
+
+            yield return _testSaveLoadService.Load<PlayerData>(data => loaded = data);
+
+            Debug.Log($"Из файла — золото: {loaded.WalletData[CurrencyTypes.Gold]}, победы: {loaded.Wins}, поражения: {loaded.Losses}");
+        }
+        //КОНЕЦ ТЕСТА
     }
 }

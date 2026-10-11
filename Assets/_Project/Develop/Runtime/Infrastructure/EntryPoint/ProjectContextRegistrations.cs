@@ -2,8 +2,13 @@
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagement;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
+using Assets._Project.Develop.Runtime.Utilities.DataManagement;
+using Assets._Project.Develop.Runtime.Utilities.DataManagement.DataRepository;
+using Assets._Project.Develop.Runtime.Utilities.DataManagement.KeysStorage;
+using Assets._Project.Develop.Runtime.Utilities.DataManagement.Serializers;
 using Assets._Project.Develop.Runtime.Utilities.LoadingScreen;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
@@ -18,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             container.RegisterAsSingle(CreateConfigsProviderService);
             container.RegisterAsSingle(CreateSceneLoaderService);
             container.RegisterAsSingle(CreateSceneSwitcherService);
+            container.RegisterAsSingle<ISaveLoadService>(CreateSaveLoadService);
         }
 
         private static ResourcesAssetsLoader CreateResourcesAssetsLoader(DIContainer c)
@@ -59,5 +65,17 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
                 c.Resolve<SceneLoaderService>(),
                 c.Resolve<ILoadingScreen>(),
                 c);
+
+        private static SaveLoadService CreateSaveLoadService(DIContainer c)
+        {
+            IDataSerializer dataSerializer = new JsonSerializer();
+            IDataKeysStorage dataKeysStorage = new MapDataKeysStorage();
+
+            string saveFolderPath = Application.isEditor ? Application.dataPath : Application.persistentDataPath;
+
+            IDataRepository dataRepository = new LocalFileDataRepository(saveFolderPath, "json");
+
+            return new SaveLoadService(dataSerializer, dataKeysStorage, dataRepository);
+        }
     }
 }
