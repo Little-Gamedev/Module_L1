@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
+using Assets._Project.Develop.Runtime.Gameplay.Results;
 using Assets._Project.Develop.Runtime.Gameplay.Sequence;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
@@ -13,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Cycle
 
         private readonly SequenceGenerator _sequenceGenerator;
         private readonly SequenceInputChecker _inputChecker;
+        private readonly GameResultService _gameResultService;
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly GameplayInputArgs _inputArgs;
@@ -24,12 +26,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Cycle
         public GameplayCycle(
             SequenceGenerator sequenceGenerator,
             SequenceInputChecker inputChecker,
+            GameResultService gameResultService,
             SceneSwitcherService sceneSwitcherService,
             ICoroutinesPerformer coroutinesPerformer,
             GameplayInputArgs inputArgs)
         {
             _sequenceGenerator = sequenceGenerator;
             _inputChecker = inputChecker;
+            _gameResultService = gameResultService;
             _sceneSwitcherService = sceneSwitcherService;
             _coroutinesPerformer = coroutinesPerformer;
             _inputArgs = inputArgs;
@@ -75,12 +79,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Cycle
         private void OnSucceeded()
         {
             Finish(true);
+            _gameResultService.ApplyWin();
             Debug.Log($"Победа! {ContinueKey} — в главное меню");
         }
 
         private void OnFailed()
         {
             Finish(false);
+            _gameResultService.ApplyLoss();
             Debug.Log($"Поражение! {ContinueKey} — начать заново");
         }
 
