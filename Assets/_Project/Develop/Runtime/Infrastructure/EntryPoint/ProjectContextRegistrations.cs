@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Utilities.AssetsManagement;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement;
+using Assets._Project.Develop.Runtime.Utilities.DataManagement.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement.DataRepository;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement.KeysStorage;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement.Serializers;
@@ -24,6 +25,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             container.RegisterAsSingle(CreateSceneLoaderService);
             container.RegisterAsSingle(CreateSceneSwitcherService);
             container.RegisterAsSingle<ISaveLoadService>(CreateSaveLoadService);
+            container.RegisterAsSingle(CreatePlayerDataProvider);
         }
 
         private static ResourcesAssetsLoader CreateResourcesAssetsLoader(DIContainer c)
@@ -77,5 +79,8 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
 
             return new SaveLoadService(dataSerializer, dataKeysStorage, dataRepository);
         }
+
+        private static PlayerDataProvider CreatePlayerDataProvider(DIContainer c)
+            => new PlayerDataProvider(c.Resolve<ISaveLoadService>(), c.Resolve<ConfigsProviderService>());
     }
 }
