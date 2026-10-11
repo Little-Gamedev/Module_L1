@@ -1,10 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Infrastructure;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Meta.Features.GameStats;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Meta.ModeSelection;
-using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
-using Assets._Project.Develop.Runtime.Utilities.DataManagement.DataProviders;
+using Assets._Project.Develop.Runtime.Meta.ProgressMenu;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System.Collections;
 using UnityEngine;
@@ -15,15 +12,9 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
     {
         private DIContainer _container;
         private SequenceModeSelector _modeSelector;
+        private ProgressMenuInput _progressMenuInput;
 
         private bool _isRunning;
-
-        //ТЕСТ
-        private PlayerDataProvider _testPlayerDataProvider;
-        private ICoroutinesPerformer _testCoroutinesPerformer;
-        private WalletService _testWalletService;
-        private GameStatsService _testGameStatsService;
-        //КОНЕЦ ТЕСТА
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
         {
@@ -37,20 +28,14 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             Debug.Log("Инициализация сцены меню");
 
             _modeSelector = _container.Resolve<SequenceModeSelector>();
-
-            //ТЕСТ
-            _testPlayerDataProvider = _container.Resolve<PlayerDataProvider>();
-            _testCoroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
-            _testWalletService = _container.Resolve<WalletService>();
-            _testGameStatsService = _container.Resolve<GameStatsService>();
-            //КОНЕЦ ТЕСТА
+            _progressMenuInput = _container.Resolve<ProgressMenuInput>();
 
             yield break;
         }
 
         public override void Run()
         {
-            Debug.Log("Главное меню. Нажмите 1 — цифры, 2 — буквы");
+            Debug.Log("Главное меню. 1 — цифры, 2 — буквы, I — прогресс, R — сбросить прогресс");
 
             _isRunning = true;
         }
@@ -61,29 +46,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
                 return;
 
             _modeSelector.Update();
-
-            //ТЕСТ
-            if (Input.GetKeyDown(KeyCode.G))
-                _testWalletService.Add(CurrencyTypes.Gold, 10);
-
-            if (Input.GetKeyDown(KeyCode.W))
-                _testGameStatsService.AddWin();
-
-            if (Input.GetKeyDown(KeyCode.L))
-                _testGameStatsService.AddLoss();
-
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                Debug.Log($"Золото: {_testWalletService.GetCurrency(CurrencyTypes.Gold).Value}, " +
-                    $"победы: {_testGameStatsService.Wins.Value}, поражения: {_testGameStatsService.Losses.Value}");
-            }
-
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                _testCoroutinesPerformer.StartPerform(_testPlayerDataProvider.Save());
-                Debug.Log("Сохранение через провайдер вызвано");
-            }
-            //КОНЕЦ ТЕСТА
+            _progressMenuInput.Update();
         }
     }
 }

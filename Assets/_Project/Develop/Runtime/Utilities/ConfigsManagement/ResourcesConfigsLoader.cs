@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay;
+using Assets._Project.Develop.Runtime.Configs.Meta.Progress;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Sequence;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagement;
@@ -18,6 +19,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagement
             { typeof(SequenceConfig), "Configs/SequenceConfig" },
             { typeof(StartWalletConfig), "Configs/Meta/Wallet/StartWalletConfig" },
             { typeof(GameRewardsConfig), "Configs/Gameplay/GameRewardsConfig" },
+            { typeof(ProgressResetConfig), "Configs/Meta/Progress/ProgressResetConfig" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)
