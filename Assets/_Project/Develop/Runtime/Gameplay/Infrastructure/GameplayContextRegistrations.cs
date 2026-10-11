@@ -9,7 +9,6 @@ using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -17,8 +16,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
     {
         public static void Process(DIContainer container, GameplayInputArgs args)
         {
-            Debug.Log("Процесс регистрации сервисов на сцене геймплея");
-
             container.RegisterAsSingle(c => CreateSequenceGenerator(c, args));
             container.RegisterAsSingle(CreateSequenceInputChecker);
             container.RegisterAsSingle(CreateGameResultService);

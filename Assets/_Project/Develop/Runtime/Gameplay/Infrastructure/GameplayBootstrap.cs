@@ -4,7 +4,6 @@ using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System;
 using System.Collections;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -30,8 +29,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override IEnumerator Initialize()
         {
-            Debug.Log($"Инициализация геймплейной сцены. Режим: {_inputArgs.Mode}");
-
             _gameplayCycle = _container.Resolve<GameplayCycle>();
 
             yield break;

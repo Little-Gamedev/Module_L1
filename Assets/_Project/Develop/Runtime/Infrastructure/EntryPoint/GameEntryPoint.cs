@@ -13,11 +13,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
     {
         private void Awake()
         {
-            Debug.Log("Старт проекта, сетап настроек");
-
             SetupAppSettings();
-
-            Debug.Log("Процесс регистрации сервисов всего проекта");
 
             DIContainer projectContainer = new DIContainer();
 
@@ -42,8 +38,6 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
 
             loadingScreen.Show();
 
-            Debug.Log("Начинается инициализация сервисов");
-
             yield return container.Resolve<ConfigsProviderService>().LoadAsync();
 
             bool isPlayerDataSaveExists = false;
@@ -54,8 +48,6 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
                 yield return playerDataProvider.Load();
             else
                 playerDataProvider.Reset();
-
-            Debug.Log("Завершается инициализация сервисов");
 
             loadingScreen.Hide();
 

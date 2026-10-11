@@ -36,7 +36,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Progress
             if (_walletService.Enough(CurrencyTypes.Gold, price) == false)
             {
                 int currentGold = _walletService.GetCurrency(CurrencyTypes.Gold).Value;
-                Debug.Log($"Недостаточно золота для сброса побд и поражений: нужно {price}, есть {currentGold}");
+                Debug.Log($"Недостаточно золота для сброса побед и поражений: нужно {price}, есть {currentGold}");
                 return;
             }
 

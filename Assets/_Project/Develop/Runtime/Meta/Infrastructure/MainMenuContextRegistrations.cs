@@ -9,7 +9,6 @@ using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 {
@@ -17,8 +16,6 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
     {
         public static void Process(DIContainer container)
         {
-            Debug.Log("Процесс регистрации сервисов на сцене меню");
-
             container.RegisterAsSingle(CreateSequenceModeSelector);
             container.RegisterAsSingle(CreatePlayerProgressPrinter);
             container.RegisterAsSingle(CreateProgressResetService);

@@ -25,8 +25,6 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
         public override IEnumerator Initialize()
         {
-            Debug.Log("Инициализация сцены меню");
-
             _modeSelector = _container.Resolve<SequenceModeSelector>();
             _progressMenuInput = _container.Resolve<ProgressMenuInput>();
 

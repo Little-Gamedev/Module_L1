@@ -73,3 +73,7 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Save file created in Editor (Application.dataPath)
+/[Aa]ssets/PlayerData.json
+/[Aa]ssets/PlayerData.json.meta
