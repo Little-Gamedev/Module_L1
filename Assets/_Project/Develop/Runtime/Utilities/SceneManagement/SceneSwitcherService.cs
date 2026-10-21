@@ -13,6 +13,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
         private readonly ILoadingScreen _loadingScreen;
         private readonly DIContainer _projectContainer;
 
+        private DIContainer _currentSceneContainer;
+
         public SceneSwitcherService(
             SceneLoaderService sceneLoaderService,
             ILoadingScreen loadingScreen,
@@ -27,6 +29,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
         {
             _loadingScreen.Show();
 
+            _currentSceneContainer?.Dispose();
+
             yield return _sceneLoaderService.LoadAsync(Scenes.Empty);
             yield return _sceneLoaderService.LoadAsync(sceneName);
 
@@ -35,11 +39,11 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
             if (sceneBootstrap == null)
                 throw new NullReferenceException(nameof(sceneBootstrap) + " не найден на сцене " + sceneName);
 
-            DIContainer sceneContainer = new DIContainer(_projectContainer);
+            _currentSceneContainer = new DIContainer(_projectContainer);
 
-            sceneBootstrap.ProcessRegistrations(sceneContainer, sceneArgs);
+            sceneBootstrap.ProcessRegistrations(_currentSceneContainer, sceneArgs);
 
-            sceneContainer.Initialize();
+            _currentSceneContainer.Initialize();
 
             yield return sceneBootstrap.Initialize();
 

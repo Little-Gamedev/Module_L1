@@ -48,10 +48,5 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             _gameplayCycle.Update();
         }
-
-        private void OnDestroy()
-        {
-            _gameplayCycle?.Dispose();
-        }
     }
 }

@@ -74,6 +74,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Cycle
         {
             _inputChecker.Succeeded -= OnSucceeded;
             _inputChecker.Failed -= OnFailed;
+            //ТЕСТ
+            Debug.Log("GameplayCycle освобождён контейнером");
+            //КОНЕЦ ТЕСТА
         }
 
         private void OnSucceeded()

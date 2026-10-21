@@ -21,7 +21,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.DI
                 return _cachedInstance;
 
             if (_creator == null)
-                throw new InvalidOperationException("Нет ни готового объекта, ни способа его создать");
+                throw new InvalidOperationException("Нет ни объекта, ни способа создания");
 
             _cachedInstance = _creator.Invoke(container);
 
@@ -29,5 +29,17 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.DI
         }
 
         public void NonLazy() => IsNonLazy = true;
+
+        public void OnInitialize()
+        {
+            if (_cachedInstance is IInitializable initializable)
+                initializable.Initialize();
+        }
+
+        public void OnDispose()
+        {
+            if (_cachedInstance is IDisposable disposable)
+                disposable.Dispose();
+        }
     }
 }
