@@ -5,10 +5,13 @@ using Assets._Project.Develop.Runtime.Gameplay.Sequence;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.GameStats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.Utilities.AssetsManagement;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -16,10 +19,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
     {
         public static void Process(DIContainer container, GameplayInputArgs args)
         {
+            container.RegisterAsSingle(CreateUIRoot).NonLazy();
             container.RegisterAsSingle(c => CreateSequenceGenerator(c, args));
             container.RegisterAsSingle(CreateSequenceInputChecker);
             container.RegisterAsSingle(CreateGameResultService);
             container.RegisterAsSingle(c => CreateGameplayCycle(c, args));
+        }
+
+        private static UIRoot CreateUIRoot(DIContainer c)
+        {
+            UIRoot uiRootPrefab = c.Resolve<ResourcesAssetsLoader>().Load<UIRoot>("UI/UIRoot");
+
+            return Object.Instantiate(uiRootPrefab);
         }
 
         private static SequenceGenerator CreateSequenceGenerator(DIContainer c, GameplayInputArgs args)

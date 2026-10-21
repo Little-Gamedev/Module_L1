@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.GameStats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagement;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
@@ -33,10 +34,14 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             container.RegisterAsSingle(CreatePlayerDataProvider);
             container.RegisterAsSingle(CreateWalletService).NonLazy();
             container.RegisterAsSingle(CreateGameStatsService).NonLazy();
+            container.RegisterAsSingle(CreateViewsFactory);
         }
 
         private static ResourcesAssetsLoader CreateResourcesAssetsLoader(DIContainer c)
             => new ResourcesAssetsLoader();
+
+        private static ViewsFactory CreateViewsFactory(DIContainer c)
+            => new ViewsFactory(c.Resolve<ResourcesAssetsLoader>());
 
         private static CoroutinesPerformer CreateCoroutinesPerformer(DIContainer c)
         {
