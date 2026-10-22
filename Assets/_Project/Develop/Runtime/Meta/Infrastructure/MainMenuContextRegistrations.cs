@@ -4,8 +4,8 @@ using Assets._Project.Develop.Runtime.Meta.Features.GameStats;
 using Assets._Project.Develop.Runtime.Meta.Features.Progress;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Meta.ModeSelection;
-using Assets._Project.Develop.Runtime.Meta.ProgressMenu;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.MainMenu;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagement;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
@@ -21,9 +21,9 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
         {
             container.RegisterAsSingle(CreateUIRoot).NonLazy();
             container.RegisterAsSingle(CreateSequenceModeSelector);
-            container.RegisterAsSingle(CreatePlayerProgressPrinter);
             container.RegisterAsSingle(CreateProgressResetService);
-            container.RegisterAsSingle(CreateProgressMenuInput);
+            container.RegisterAsSingle(CreateMainMenuPresentersFactory);
+            container.RegisterAsSingle(CreateMainMenuScreenPresenter).NonLazy();
         }
 
         private static UIRoot CreateUIRoot(DIContainer c)
@@ -38,11 +38,6 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
                 c.Resolve<SceneSwitcherService>(),
                 c.Resolve<ICoroutinesPerformer>());
 
-        private static PlayerProgressPrinter CreatePlayerProgressPrinter(DIContainer c)
-            => new PlayerProgressPrinter(
-                c.Resolve<WalletService>(),
-                c.Resolve<GameStatsService>());
-
         private static ProgressResetService CreateProgressResetService(DIContainer c)
             => new ProgressResetService(
                 c.Resolve<WalletService>(),
@@ -51,9 +46,17 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
                 c.Resolve<ICoroutinesPerformer>(),
                 c.Resolve<ConfigsProviderService>().GetConfig<ProgressResetConfig>());
 
-        private static ProgressMenuInput CreateProgressMenuInput(DIContainer c)
-            => new ProgressMenuInput(
-                c.Resolve<PlayerProgressPrinter>(),
-                c.Resolve<ProgressResetService>());
+        private static MainMenuPresentersFactory CreateMainMenuPresentersFactory(DIContainer c)
+            => new MainMenuPresentersFactory(c);
+
+        private static MainMenuScreenPresenter CreateMainMenuScreenPresenter(DIContainer c)
+        {
+            UIRoot uiRoot = c.Resolve<UIRoot>();
+
+            MainMenuScreenView view = c.Resolve<ViewsFactory>()
+                .Create<MainMenuScreenView>(ViewIDs.MainMenuScreenView, uiRoot.HUDLayer);
+
+            return c.Resolve<MainMenuPresentersFactory>().CreateMainMenuScreenPresenter(view);
+        }
     }
 }

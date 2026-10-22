@@ -3,7 +3,6 @@ using Assets._Project.Develop.Runtime.Meta.Features.GameStats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
 using Assets._Project.Develop.Runtime.Utilities.DataManagement.DataProviders;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Meta.Features.Progress
 {
@@ -29,23 +28,19 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Progress
             _config = config;
         }
 
-        public void TryReset()
+        public int Price => _config.ResetPrice;
+
+        public bool TryReset()
         {
-            int price = _config.ResetPrice;
+            if (_walletService.Enough(CurrencyTypes.Gold, Price) == false)
+                return false;
 
-            if (_walletService.Enough(CurrencyTypes.Gold, price) == false)
-            {
-                int currentGold = _walletService.GetCurrency(CurrencyTypes.Gold).Value;
-                Debug.Log($"Недостаточно золота для сброса побед и поражений: нужно {price}, есть {currentGold}");
-                return;
-            }
-
-            _walletService.Spend(CurrencyTypes.Gold, price);
+            _walletService.Spend(CurrencyTypes.Gold, Price);
             _gameStatsService.Clear();
 
             _coroutinesPerformer.StartPerform(_playerDataProvider.Save());
 
-            Debug.Log($"Прогресс сброшен за {price} монет");
+            return true;
         }
     }
 }

@@ -1,7 +1,5 @@
-﻿namespace Assets._Project.Develop.Runtime.UI.Core
+﻿public static class ViewIDs
 {
-    public static class ViewIDs
-    {
-        public const string CurrencyView = nameof(CurrencyView);
-    }
+    public const string CurrencyView = nameof(CurrencyView);
+    public const string MainMenuScreenView = nameof(MainMenuScreenView);
 }
