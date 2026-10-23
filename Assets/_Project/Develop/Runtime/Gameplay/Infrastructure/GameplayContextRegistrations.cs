@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.GameStats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagement;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagement;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagement;
@@ -24,6 +25,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateSequenceInputChecker);
             container.RegisterAsSingle(CreateGameResultService);
             container.RegisterAsSingle(c => CreateGameplayCycle(c, args));
+            container.RegisterAsSingle(CreateGameplayPresentersFactory);
+            container.RegisterAsSingle(CreateGameplayScreenPresenter).NonLazy();
         }
 
         private static UIRoot CreateUIRoot(DIContainer c)
@@ -59,5 +62,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<SceneSwitcherService>(),
                 c.Resolve<ICoroutinesPerformer>(),
                 args);
+
+        private static GameplayPresentersFactory CreateGameplayPresentersFactory(DIContainer c)
+            => new GameplayPresentersFactory(c);
+
+        private static GameplayScreenPresenter CreateGameplayScreenPresenter(DIContainer c)
+        {
+            UIRoot uiRoot = c.Resolve<UIRoot>();
+
+            GameplayScreenView view = c.Resolve<ViewsFactory>()
+                .Create<GameplayScreenView>(ViewIDs.GameplayScreenView, uiRoot.HUDLayer);
+
+            return c.Resolve<GameplayPresentersFactory>().CreateGameplayScreenPresenter(view);
+        }
     }
 }

@@ -10,7 +10,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Cycle
 {
     public class GameplayCycle : IDisposable
     {
-        private const KeyCode ContinueKey = KeyCode.Space;
+        public const KeyCode ContinueKey = KeyCode.Space;
+
+        public event Action Won;
+        public event Action Lost;
 
         private readonly SequenceGenerator _sequenceGenerator;
         private readonly SequenceInputChecker _inputChecker;
@@ -44,11 +47,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Cycle
             _inputChecker.Succeeded += OnSucceeded;
             _inputChecker.Failed += OnFailed;
 
-            string sequence = _sequenceGenerator.Generate();
-
-            Debug.Log($"Введите последовательность: {sequence}");
-
-            _inputChecker.Start(sequence);
+            _inputChecker.Start(_sequenceGenerator.Generate());
         }
 
         public void Update()
@@ -80,14 +79,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Cycle
         {
             Finish(true);
             _gameResultService.ApplyWin();
-            Debug.Log($"Победа! {ContinueKey} — в главное меню");
+            Won?.Invoke();
         }
 
         private void OnFailed()
         {
             Finish(false);
             _gameResultService.ApplyLoss();
-            Debug.Log($"Поражение! {ContinueKey} — начать заново");
+            Lost?.Invoke();
         }
 
         private void Finish(bool isWin)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Sequence
@@ -8,17 +9,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Sequence
         public event Action Succeeded;
         public event Action Failed;
 
-        private string _sequence;
-        private int _currentIndex;
+        private readonly ReactiveVariable<string> _sequence = new(string.Empty);
+        private readonly ReactiveVariable<string> _typedSequence = new(string.Empty);
+
         private bool _isChecking;
+
+        public IReadOnlyVariable<string> Sequence => _sequence;
+        public IReadOnlyVariable<string> TypedSequence => _typedSequence;
 
         public void Start(string sequence)
         {
             if (string.IsNullOrEmpty(sequence))
                 throw new ArgumentException("Не может быть пустой", nameof(sequence));
 
-            _sequence = sequence;
-            _currentIndex = 0;
+            _sequence.Value = sequence;
+            _typedSequence.Value = string.Empty;
             _isChecking = true;
         }
 
@@ -41,9 +46,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Sequence
 
         private void CheckSymbol(char inputSymbol)
         {
-            char expectedSymbol = _sequence[_currentIndex];
+            int currentIndex = _typedSequence.Value.Length;
+            char expectedSymbol = _sequence.Value[currentIndex];
+            char typedSymbol = char.ToUpperInvariant(inputSymbol);
 
-            if (char.ToUpperInvariant(inputSymbol) != char.ToUpperInvariant(expectedSymbol))
+            _typedSequence.Value += typedSymbol;
+
+            if (typedSymbol != char.ToUpperInvariant(expectedSymbol))
             {
                 _isChecking = false;
                 Failed?.Invoke();
@@ -51,11 +60,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Sequence
                 return;
             }
 
-            Debug.Log($"Верно: {expectedSymbol}");
-
-            _currentIndex++;
-
-            if (_currentIndex < _sequence.Length)
+            if (_typedSequence.Value.Length < _sequence.Value.Length)
                 return;
 
             _isChecking = false;
