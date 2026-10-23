@@ -37,8 +37,6 @@ namespace Assets._Project.Develop.Runtime.Meta.ModeSelection
         {
             _isSelected = true;
 
-            Debug.Log($"Выбран режим: {mode}");
-
             _coroutinesPerformer.StartPerform(
                 _sceneSwitcherService.ProcessSwitchTo(Scenes.Gameplay, new GameplayInputArgs(mode)));
         }
